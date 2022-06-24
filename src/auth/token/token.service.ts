@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../core/prisma.service';
 import { TokenPair, User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+
+import { PrismaService } from '../../core/prisma.service';
 
 @Injectable()
 export class TokenService {
@@ -9,9 +10,14 @@ export class TokenService {
     private prismaService: PrismaService,
     private jwtService: JwtService,
   ) {}
+
   async saveToken(token, id: number): Promise<TokenPair> {
     return this.prismaService.tokenPair.create({
-      data: { access_token: token.access, refresh_token: token.refresh, authorId: id },
+      data: {
+        access_token: token.access,
+        refresh_token: token.refresh,
+        authorId: id,
+      },
     });
   }
 
@@ -33,7 +39,11 @@ export class TokenService {
 
     return {
       user,
-      tokenPair
+      tokenPair,
     };
+  }
+
+  async deleteTokenPair(id: number): Promise<TokenPair> {
+    return this.prismaService.tokenPair.delete({ where: { authorId: id } });
   }
 }
