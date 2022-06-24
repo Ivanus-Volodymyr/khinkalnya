@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dto/registration-user-dto';
 import { TokenService } from './token/token.service';
@@ -39,17 +40,30 @@ export class AuthService {
 
   async login(data: LoginUserDto) {
     try {
-      const user = await this.userService.getByEmail(data.email);
+      const user = await this._validate(data);
+      await this.tokenService.deleteTokenPair(user.id);
 
-      if (!user || data.password !== user.password) {
-        return new HttpException(
-            'wrong email or password',
-            HttpStatus.BAD_REQUEST,
-        );
-      }
-
+      return this.tokenService.generateToken(user);
     } catch (e) {
       console.log(e.message);
+      return e.message[0];
     }
+  }
+
+  private async _validate(data: LoginUserDto) {
+    const userFromDb = await this.userService.getByEmail(data.email);
+    const checkPass = await bcrypt.compare(
+        data.password,
+        userFromDb.password,
+    );
+
+    if (userFromDb && checkPass) {
+      return userFromDb;
+    }
+
+    throw new UnauthorizedException(
+        HttpStatus.UNAUTHORIZED,
+        'wrong email or password',
+    );
   }
 }
