@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dto/registration-user-dto';
 import { TokenService } from './token/token.service';
+import {LoginUserDto} from "./dto/login-user-dto";
 
 @Injectable()
 export class AuthService {
@@ -33,6 +34,22 @@ export class AuthService {
     } catch (e) {
       console.log(e.message);
       return e.message[0];
+    }
+  }
+
+  async login(data: LoginUserDto) {
+    try {
+      const user = await this.userService.getByEmail(data.email);
+
+      if (!user || data.password !== user.password) {
+        return new HttpException(
+            'wrong email or password',
+            HttpStatus.BAD_REQUEST,
+        );
+      }
+
+    } catch (e) {
+      console.log(e.message);
     }
   }
 }

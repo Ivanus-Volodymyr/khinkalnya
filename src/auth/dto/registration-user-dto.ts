@@ -1,4 +1,3 @@
-// import { CreatePostsDto } from '../../posts/dto';
 import {
   IsBoolean,
   IsEmail,
@@ -8,8 +7,6 @@ import {
   Length,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-// import { CommentCreateDto } from '../../comments/dto';
 
 export class CreateUserDto {
   @IsString()
@@ -36,6 +33,4 @@ export class CreateUserDto {
   @Length(2, 20)
   @IsNotEmpty()
   readonly password: string;
-  // public posts?: CreatePostsDto[];
-  // public comments?: CommentCreateDto[];
 }
