@@ -3,7 +3,7 @@ import { ApiBody, ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/registration-user-dto';
 import { AuthService } from './auth.service';
-import {LoginUserDto} from "./dto/login-user-dto";
+import { LoginUserDto } from './dto/login-user-dto';
 
 @Controller('auth')
 export class AuthController {

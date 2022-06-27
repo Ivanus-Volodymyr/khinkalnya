@@ -1,10 +1,15 @@
-import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dto/registration-user-dto';
 import { TokenService } from './token/token.service';
-import {LoginUserDto} from "./dto/login-user-dto";
+import { LoginUserDto } from './dto/login-user-dto';
 
 @Injectable()
 export class AuthService {
@@ -52,18 +57,15 @@ export class AuthService {
 
   private async _validate(data: LoginUserDto) {
     const userFromDb = await this.userService.getByEmail(data.email);
-    const checkPass = await bcrypt.compare(
-        data.password,
-        userFromDb.password,
-    );
+    const checkPass = await bcrypt.compare(data.password, userFromDb.password);
 
     if (userFromDb && checkPass) {
       return userFromDb;
     }
 
     throw new UnauthorizedException(
-        HttpStatus.UNAUTHORIZED,
-        'wrong email or password',
+      HttpStatus.UNAUTHORIZED,
+      'wrong email or password',
     );
   }
 }
